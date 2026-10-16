@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+/* Tokens sourced from design.md (Lepidus design system) — colors, type, radius, shadow only */
+@theme {
+  --font-sans: "Open Sans", system-ui, sans-serif;
+
+  --color-brand: #1c4599;
+  --color-brand-hover: #183a81;
+  --color-brand-light: #e4edff;
+  --color-brand-accent: #2e98d4;
+
+  --color-ink: #364765;
+  --color-ink-muted: #555766;
+  --color-ink-disabled: #727171;
+
+  --color-surface: #ffffff;
+  --color-page: #f5f7fd;
+  --color-border: #c7c7c7;
+  --color-border-subtle: #e0e0e0;
+
+  --color-danger: #c62828;
+  --color-danger-bg: #ffebee;
+  --color-success: #2e7d32;
+  --color-success-bg: #e8f5e9;
+
+  --radius-card: 15px;
+  --radius-field: 25px;
+
+  --shadow-card: 0 2px 9px 0 rgb(0 0 0 / 0.1);
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
