@@ -10,6 +10,7 @@ export default function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: FormEvent) {
@@ -21,39 +22,34 @@ export default function Register() {
     }
 
     setError('')
+    setNotice('')
     setLoading(true)
 
+    // The `profiles` row is created server-side by a DB trigger on auth.users
+    // (see README), so no client insert is needed and RLS never blocks it.
     const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { full_name: fullName } },
     })
 
+    setLoading(false)
+
     if (signUpError) {
-      setLoading(false)
-      setError(signUpError.message)
+      setError(
+        signUpError.message.toLowerCase().includes('rate limit')
+          ? 'Too many sign-up emails sent recently. Please wait a while and try again, or ask an admin to disable "Confirm email" for testing.'
+          : signUpError.message,
+      )
       return
     }
 
-    if (data.user) {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({ id: data.user.id, full_name: fullName, email })
-
-      if (profileError) {
-        setLoading(false)
-        setError(profileError.message)
-        return
-      }
-    }
-
-    setLoading(false)
-
     if (data.session) {
       navigate('/landing')
-    } else {
-      navigate('/login')
+      return
     }
+
+    setNotice('Account created! Check your email to confirm it, then sign in.')
   }
 
   return (
@@ -71,6 +67,15 @@ export default function Register() {
               className="rounded-field bg-danger-bg px-4 py-2 text-sm text-danger"
             >
               {error}
+            </p>
+          )}
+
+          {notice && (
+            <p
+              role="status"
+              className="rounded-field bg-success-bg px-4 py-2 text-sm text-success"
+            >
+              {notice}
             </p>
           )}
 

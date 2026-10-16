@@ -5,7 +5,7 @@ React + Vite + TypeScript app with Tailwind CSS, React Router, and Supabase auth
 ## Pages
 
 - `/login` — sign in with email + password (Supabase Auth)
-- `/register` — create an account; writes a row to the `profiles` table
+- `/register` — create an account; a DB trigger writes a row to the `profiles` table
 - `/landing` — protected; lists everyone who has registered (requires sign-in)
 
 ## Setup
@@ -33,8 +33,31 @@ React + Vite + TypeScript app with Tailwind CSS, React Router, and Supabase auth
    create policy "Public read access" on public.profiles
      for select using (true);
 
-   create policy "Users can insert their own profile" on public.profiles
-     for insert with check (auth.uid() = id);
+   -- Auto-create a profile row whenever a new auth user signs up. This runs
+   -- as the table owner (security definer), so it works even before the new
+   -- user has a session/JWT (e.g. while "Confirm email" is pending) and is
+   -- never blocked by RLS the way a client-side insert would be.
+   create function public.handle_new_user()
+   returns trigger
+   language plpgsql
+   security definer set search_path = public
+   as $$
+   begin
+     insert into public.profiles (id, full_name, email)
+     values (new.id, coalesce(new.raw_user_meta_data->>'full_name', ''), new.email);
+     return new;
+   end;
+   $$;
+
+   create trigger on_auth_user_created
+     after insert on auth.users
+     for each row execute function public.handle_new_user();
+   ```
+
+   If you already created the `profiles` table and an insert policy from an earlier
+   version of this README, you can drop the now-unused insert policy:
+   ```sql
+   drop policy if exists "Users can insert their own profile" on public.profiles;
    ```
 4. In Supabase → Authentication → Providers, keep Email enabled. If you don't want email
    confirmation for this demo, turn off "Confirm email" under Authentication → Settings.
