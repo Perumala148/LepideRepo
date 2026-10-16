@@ -1,9 +1,10 @@
 interface LepideLogoProps {
   className?: string
+  textClassName?: string
 }
 
 // Brand mark hotlinked from the Lepidus design system, per design.md asset reference
-export default function LepideLogo({ className = '' }: LepideLogoProps) {
+export default function LepideLogo({ className = '', textClassName = 'text-brand' }: LepideLogoProps) {
   return (
     <div className={`flex items-center justify-center gap-2 ${className}`}>
       <img
@@ -12,7 +13,8 @@ export default function LepideLogo({ className = '' }: LepideLogoProps) {
         width={36}
         height={36}
       />
-      <span className="text-xl font-semibold text-brand">Lepide</span>
+      <span className={`text-xl font-semibold ${textClassName}`}>Lepide</span>
     </div>
   )
 }
+

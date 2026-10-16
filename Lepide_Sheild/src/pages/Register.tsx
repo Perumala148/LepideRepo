@@ -1,14 +1,19 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabaseClient'
 import LepideLogo from '../components/LepideLogo'
 import ShieldIcon from '../components/ShieldIcon'
+import AuthBackground from '../components/AuthBackground'
+import AuthShowcase from '../components/AuthShowcase'
+import Footer from '../components/Footer'
 
 const EMAIL_PATTERN = /^\S+@\S+\.\S+$/
 
 export default function Register() {
   const navigate = useNavigate()
+  const shouldReduceMotion = useReducedMotion()
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -75,38 +80,67 @@ export default function Register() {
   }
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center gap-8 overflow-hidden bg-page px-4">
-      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="animate-blob absolute -left-24 -top-24 h-72 w-72 rounded-full bg-brand-accent/20 blur-3xl" />
-        <div className="animate-blob animation-delay-2000 absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-brand/20 blur-3xl" />
-        <ShieldIcon className="animate-shield-float absolute left-1/2 top-1/2 h-[32rem] w-[32rem] -translate-x-1/2 -translate-y-1/2 text-brand/5" />
-      </div>
+    <main className="relative flex min-h-screen flex-col items-center justify-center gap-8 overflow-hidden bg-page px-4 py-10">
+      <AuthBackground />
 
-      <div className="relative z-10 flex flex-col items-center gap-4">
-        <LepideLogo />
-        <h1 className="text-2xl font-semibold text-ink">Create your Lepide account</h1>
-      </div>
+      <div className="relative z-10 grid w-full max-w-5xl items-center gap-10 lg:grid-cols-2">
+        <AuthShowcase />
 
-      <div className="shield-card relative z-10 w-full max-w-sm rounded-card border border-transparent bg-surface p-8 shadow-card">
+        <div className="flex flex-col items-center gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center gap-4 lg:hidden"
+          >
+            <LepideLogo />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center gap-4"
+          >
+            <h1 className="text-2xl font-semibold text-ink">Create your Lepide account</h1>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 24, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
+            className="shield-card w-full max-w-sm rounded-card border border-transparent bg-surface p-8 shadow-card"
+          >
         <form className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
-          {error && (
-            <p
-              key={errorKey}
-              role="alert"
-              className="animate-shake rounded-field bg-danger-bg px-4 py-2 text-sm text-danger"
-            >
-              {error}
-            </p>
-          )}
+          <AnimatePresence mode="wait">
+            {error && (
+              <motion.p
+                key={errorKey}
+                role="alert"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, x: shouldReduceMotion ? 0 : [0, -8, 8, -6, 6, 0] }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.45 }}
+                className="rounded-field bg-danger-bg px-4 py-2 text-sm text-danger"
+              >
+                {error}
+              </motion.p>
+            )}
+          </AnimatePresence>
 
-          {notice && (
-            <p
-              role="status"
-              className="animate-pop-in rounded-field bg-success-bg px-4 py-2 text-sm text-success"
-            >
-              {notice}
-            </p>
-          )}
+          <AnimatePresence>
+            {notice && (
+              <motion.p
+                role="status"
+                initial={{ opacity: 0, scale: 0.9, y: -4 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="rounded-field bg-success-bg px-4 py-2 text-sm text-success"
+              >
+                {notice}
+              </motion.p>
+            )}
+          </AnimatePresence>
 
           <div className="flex flex-col gap-1">
             <label htmlFor="fullName" className="text-sm font-medium text-ink">
@@ -136,9 +170,19 @@ export default function Register() {
                 className="w-full rounded-field border border-border px-4 py-2 pr-10 text-ink outline-none focus:border-brand"
                 aria-describedby="email-helper"
               />
-              {isEmailValid && (
-                <ShieldIcon className="animate-pop-in pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-success" />
-              )}
+              <AnimatePresence>
+                {isEmailValid && (
+                  <motion.span
+                    key="email-valid"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"
+                  >
+                    <ShieldIcon className="h-5 w-5 text-success" />
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </div>
             <span id="email-helper" className="text-xs text-ink-muted">
               Use your work email
@@ -159,9 +203,19 @@ export default function Register() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-field border border-border px-4 py-2 pr-10 text-ink outline-none focus:border-brand"
               />
-              {isPasswordValid && (
-                <ShieldIcon className="animate-pop-in pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-success" />
-              )}
+              <AnimatePresence>
+                {isPasswordValid && (
+                  <motion.span
+                    key="password-valid"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"
+                  >
+                    <ShieldIcon className="h-5 w-5 text-success" />
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
@@ -182,33 +236,69 @@ export default function Register() {
                   passwordsMismatch ? 'border-danger' : 'border-border'
                 }`}
               />
-              {passwordsMatch && (
-                <ShieldIcon className="animate-pop-in pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-success" />
-              )}
-              {passwordsMismatch && (
-                <ShieldIcon className="animate-shake pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-danger" />
-              )}
+              <AnimatePresence>
+                {passwordsMatch && (
+                  <motion.span
+                    key="confirm-match"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"
+                  >
+                    <ShieldIcon className="h-5 w-5 text-success" />
+                  </motion.span>
+                )}
+                {passwordsMismatch && (
+                  <motion.span
+                    key="confirm-mismatch"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1, x: shouldReduceMotion ? 0 : [0, -6, 6, -4, 4, 0] }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"
+                  >
+                    <ShieldIcon className="h-5 w-5 text-danger" />
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </div>
             {passwordsMismatch && <span className="text-xs text-danger">Passwords do not match</span>}
           </div>
 
-          <button
+          <motion.button
             type="submit"
             disabled={loading}
+            whileHover={loading ? undefined : { scale: 1.02 }}
+            whileTap={loading ? undefined : { scale: 0.97 }}
             className="flex items-center justify-center gap-2 rounded-field bg-brand px-4 py-2 font-medium text-white transition-colors hover:bg-brand-hover disabled:opacity-50"
           >
-            <ShieldIcon className={`h-5 w-5 ${loading ? 'animate-shield-scan' : 'animate-shield-pulse'}`} />
+            <motion.span
+              animate={
+                shouldReduceMotion
+                  ? undefined
+                  : loading
+                    ? { scale: [1, 1.2, 1], rotate: [0, -8, 8, 0] }
+                    : { scale: [1, 1.1, 1] }
+              }
+              transition={{ duration: loading ? 0.9 : 2.2, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <ShieldIcon className="h-5 w-5" />
+            </motion.span>
             {loading ? 'Creating account…' : 'Create account'}
-          </button>
+          </motion.button>
         </form>
+          </motion.div>
+
+          <p className="text-sm text-ink-muted">
+            Already have an account?{' '}
+            <Link to="/login" className="font-medium text-brand">
+              Sign in
+            </Link>
+          </p>
+        </div>
       </div>
 
-      <p className="relative z-10 text-sm text-ink-muted">
-        Already have an account?{' '}
-        <Link to="/login" className="font-medium text-brand">
-          Sign in
-        </Link>
-      </p>
+      <Footer />
     </main>
   )
 }
