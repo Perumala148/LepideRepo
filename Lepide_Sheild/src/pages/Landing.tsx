@@ -4,6 +4,13 @@ import { supabase } from '../lib/supabaseClient'
 import type { Profile } from '../lib/supabaseClient'
 import LepideLogo from '../components/LepideLogo'
 
+const GAMES = [
+  { name: 'Snake', emoji: '🐍', url: 'https://www.google.com/fbx?fbx=snake_arcade' },
+  { name: 'Solitaire', emoji: '🃏', url: 'https://www.google.com/logos/fnbx/solitaire/standalone.html' },
+  { name: 'Minesweeper', emoji: '💣', url: 'https://www.google.com/fbx?fbx=minesweeper' },
+  { name: 'Tic Tac Toe', emoji: '⭕', url: 'https://www.google.com/fbx?fbx=tic_tac_toe' },
+]
+
 export default function Landing() {
   const navigate = useNavigate()
   const [profiles, setProfiles] = useState<Profile[]>([])
@@ -78,6 +85,28 @@ export default function Landing() {
               ))}
             </ul>
           )}
+        </div>
+
+        <div className="rounded-card bg-surface p-8 shadow-card">
+          <h2 className="text-xl font-semibold text-ink">Need a quick break?</h2>
+          <p className="mt-1 text-sm text-ink-muted">
+            Step away for five minutes with a classic Google mini-game (opens in a new tab).
+          </p>
+
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {GAMES.map((game) => (
+              <a
+                key={game.name}
+                href={game.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center gap-2 rounded-field border border-border px-4 py-5 text-center transition-colors hover:border-brand hover:bg-brand-light"
+              >
+                <span className="text-3xl">{game.emoji}</span>
+                <span className="text-sm font-medium text-ink">{game.name}</span>
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </main>

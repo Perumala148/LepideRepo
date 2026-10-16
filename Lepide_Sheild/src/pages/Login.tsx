@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabaseClient'
 import LepideLogo from '../components/LepideLogo'
 import ShieldIcon from '../components/ShieldIcon'
+import EyeIcon from '../components/EyeIcon'
 import AuthBackground from '../components/AuthBackground'
 import AuthShowcase from '../components/AuthShowcase'
 import Footer from '../components/Footer'
@@ -16,6 +17,7 @@ export default function Login() {
   const shouldReduceMotion = useReducedMotion()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [errorKey, setErrorKey] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -140,14 +142,24 @@ export default function Login() {
               </label>
               <span className="text-sm text-brand">Forgot password?</span>
             </div>
-            <input
-              id="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="rounded-field border border-border px-4 py-2 text-ink outline-none focus:border-brand"
-            />
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-field border border-border px-4 py-2 pr-10 text-ink outline-none focus:border-brand"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-brand"
+              >
+                <EyeIcon open={showPassword} className="h-5 w-5" />
+              </button>
+            </div>
           </div>
 
           <label className="flex items-center gap-2 text-sm text-ink-muted">

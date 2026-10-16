@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabaseClient'
 import LepideLogo from '../components/LepideLogo'
 import ShieldIcon from '../components/ShieldIcon'
+import EyeIcon from '../components/EyeIcon'
 import AuthBackground from '../components/AuthBackground'
 import AuthShowcase from '../components/AuthShowcase'
 import Footer from '../components/Footer'
@@ -18,6 +19,8 @@ export default function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState('')
   const [errorKey, setErrorKey] = useState(0)
   const [notice, setNotice] = useState('')
@@ -196,13 +199,21 @@ export default function Register() {
             <div className="relative">
               <input
                 id="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 required
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-field border border-border px-4 py-2 pr-10 text-ink outline-none focus:border-brand"
+                className="w-full rounded-field border border-border px-4 py-2 pr-16 text-ink outline-none focus:border-brand"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-brand"
+              >
+                <EyeIcon open={showPassword} className="h-5 w-5" />
+              </button>
               <AnimatePresence>
                 {isPasswordValid && (
                   <motion.span
@@ -210,7 +221,7 @@ export default function Register() {
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.5 }}
-                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"
+                    className="pointer-events-none absolute right-10 top-1/2 -translate-y-1/2"
                   >
                     <ShieldIcon className="h-5 w-5 text-success" />
                   </motion.span>
@@ -226,16 +237,24 @@ export default function Register() {
             <div className="relative">
               <input
                 id="confirmPassword"
-                type="password"
+                type={showConfirmPassword ? 'text' : 'password'}
                 required
                 minLength={6}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 aria-invalid={passwordsMismatch}
-                className={`w-full rounded-field border px-4 py-2 pr-10 text-ink outline-none focus:border-brand ${
+                className={`w-full rounded-field border px-4 py-2 pr-16 text-ink outline-none focus:border-brand ${
                   passwordsMismatch ? 'border-danger' : 'border-border'
                 }`}
               />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword((v) => !v)}
+                aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-brand"
+              >
+                <EyeIcon open={showConfirmPassword} className="h-5 w-5" />
+              </button>
               <AnimatePresence>
                 {passwordsMatch && (
                   <motion.span
@@ -243,7 +262,7 @@ export default function Register() {
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.5 }}
-                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"
+                    className="pointer-events-none absolute right-10 top-1/2 -translate-y-1/2"
                   >
                     <ShieldIcon className="h-5 w-5 text-success" />
                   </motion.span>
@@ -255,7 +274,7 @@ export default function Register() {
                     animate={{ opacity: 1, x: shouldReduceMotion ? 0 : [0, -6, 6, -4, 4, 0] }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.4 }}
-                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"
+                    className="pointer-events-none absolute right-10 top-1/2 -translate-y-1/2"
                   >
                     <ShieldIcon className="h-5 w-5 text-danger" />
                   </motion.span>

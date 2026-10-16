@@ -40,7 +40,7 @@ export default function AuthShowcase() {
   }, [])
 
   return (
-    <section className="relative hidden overflow-hidden rounded-card bg-gradient-to-br from-brand via-brand to-brand-accent p-10 text-white shadow-card lg:flex lg:min-h-[32rem] lg:flex-col lg:justify-between">
+    <section className="relative hidden overflow-hidden rounded-card bg-gradient-to-br from-brand via-brand to-brand-accent p-10 text-white shadow-card transition-colors duration-300 dark:from-[#0b1120] dark:via-[#121a33] dark:to-[#1b2a52] dark:shadow-[0_0_45px_-12px_rgba(79,179,224,0.45)] lg:flex lg:min-h-[32rem] lg:flex-col lg:justify-between">
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="auth-bg-pattern absolute inset-0 opacity-20" />
 
@@ -58,7 +58,7 @@ export default function AuthShowcase() {
         {PARTICLES.map((particle, index) => (
           <motion.div
             key={index}
-            className={`absolute text-white/20 ${particle.size}`}
+            className={`absolute text-white/20 dark:text-brand-accent/40 ${particle.size}`}
             style={{ top: particle.top, left: particle.left }}
             animate={{ y: [0, -16, 0], rotate: [0, 6, 0] }}
             transition={{

@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Enables `dark:` utility variants, toggled by adding/removing .dark on <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Tokens sourced from design.md (Lepidus design system) — colors, type, radius, shadow only */
 @theme {
   --font-sans: "Open Sans", system-ui, sans-serif;
@@ -68,10 +71,21 @@ body {
     color 0.3s ease;
 }
 
+/* A cooler dark mode: a faint two-tone glow behind everything instead of flat black */
+.dark body {
+  background-image:
+    radial-gradient(circle at 15% 10%, rgb(91 141 239 / 0.16), transparent 45%),
+    radial-gradient(circle at 85% 90%, rgb(79 179 224 / 0.14), transparent 45%);
+  background-attachment: fixed;
+}
+
 /* Shield-themed decorative animations used on the auth pages */
 .auth-bg-pattern {
   background-image: radial-gradient(circle at 1px 1px, rgb(28 69 153 / 0.08) 1px, transparent 0);
   background-size: 24px 24px;
+}
+.dark .auth-bg-pattern {
+  background-image: radial-gradient(circle at 1px 1px, rgb(79 179 224 / 0.25) 1px, transparent 0);
 }
 
 .shield-card {
@@ -84,5 +98,17 @@ body {
   box-shadow:
     0 2px 9px 0 rgb(0 0 0 / 0.1),
     0 0 0 4px rgb(46 152 212 / 0.18);
+}
+.dark .shield-card {
+  border-color: rgb(91 141 239 / 0.22);
+  box-shadow:
+    0 2px 9px 0 rgb(0 0 0 / 0.5),
+    0 0 0 1px rgb(91 141 239 / 0.1);
+}
+.dark .shield-card:focus-within {
+  border-color: var(--color-brand-accent);
+  box-shadow:
+    0 2px 9px 0 rgb(0 0 0 / 0.5),
+    0 0 0 4px rgb(79 179 224 / 0.3);
 }
 
